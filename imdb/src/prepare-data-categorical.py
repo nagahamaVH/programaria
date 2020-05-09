@@ -12,10 +12,21 @@ imdb['aspect_ratio'] = imdb['aspect_ratio'].astype('str')
 imdb['categorical_imdb_score'] = pd.cut(imdb['imdb_score'], 
 bins=[0, 4, 6, 8, 10], right=True, labels=False) + 1
 
+# Useless columns
 useless_col = ['movie_imdb_link', 'movie_title', 'imdb_score', 'plot_keywords',
 'actor_2_name', 'actor_3_name']
 
 imdb.drop(useless_col, axis=1, inplace=True)
+
+# High correlation variables
+correlated_var = ['cast_total_facebook_likes']
+
+imdb.drop(correlated_var, axis=1, inplace=True)
+
+# Creating new variables
+imdb['return_investment'] = (imdb['gross'] - imdb['budget']) / imdb['budget']
+imdb['return_investment'] = imdb['return_investment'].mask(
+    imdb['return_investment'] < 0, 0)
 
 # --- Transforming quantitative variables to log scale
 quantitative = imdb.select_dtypes(include=['float64', 'int64']).drop(
@@ -81,4 +92,13 @@ actor_dummy = actor_dummy.add_prefix('actor_')
 imdb.drop(['actor_1_name'], axis=1, inplace=True)
 imdb = pd.concat([imdb, actor_dummy], axis=1)
 
-imdb.to_csv('./imdb/data/categorical_imdb.csv', index=False, sep=';')
+# --- Inpute missing data
+frequency = imdb.isnull().sum().sort_values()
+percentual = imdb.isnull().sum() / imdb.isnull().count()
+
+missing_data = pd.concat([frequency, percentual], axis=1, 
+keys=['frequency', 'percentual']).sort_values('percentual', ascending=False)
+
+imdb.columns
+
+#imdb.to_csv('./imdb/data/categorical_imdb.csv', index=False, sep=';')
