@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import RFECV
-from sklearn.metrics import confusion_matrix, classification_report
 
 # Prepare data
 from imdb.src.prepare_data_categorical import *
@@ -34,6 +33,4 @@ logit_model = logit_model.fit(x_train, y_train)
 
 y_pred = logit_model.predict(x_test)
 
-cnf_matrix = confusion_matrix(y_test, y_pred)
-
-print(classification_report(y_test, y_pred, target_names=['1', '2', '3', '4']))
+print(logit_model.score(x_test, y_test))
