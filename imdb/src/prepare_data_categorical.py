@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import itertools
 from imdb.src.utils import *
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 raw_imdb = pd.read_csv('./imdb/data/movie_metadata.csv')
 
@@ -142,6 +144,16 @@ missing_columns = missing_data.index[missing_data].tolist()
 median_values = imdb[missing_columns].median()
 
 imdb_clean = imdb.copy()
-imdb_clean[missing_columns] = imdb_clean[missing_columns].fillna(median_values)
+imdb[missing_columns] = imdb[missing_columns].fillna(median_values)
 
-imdb_clean.to_csv('./imdb/data/categorical_imdb.csv', index=False)
+y = imdb['categorical_imdb_score']
+x = imdb.drop(['categorical_imdb_score'], axis=1)
+
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, 
+    test_size=0.3,
+    random_state=42)
+
+standardize = StandardScaler()
+x_train = standardize.fit_transform(x_train)
+x_test = standardize.transform(x_test)
