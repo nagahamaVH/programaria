@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
@@ -25,6 +24,7 @@ plt.show()
 print(rfecv.n_features_)
 print(list(x.columns[rfecv.support_]))
 
+# Selecting the best features
 x_train = x_train[:, rfecv.support_]
 x_test = x_test[:, rfecv.support_] 
 

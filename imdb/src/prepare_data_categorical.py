@@ -152,7 +152,8 @@ x = imdb.drop(['categorical_imdb_score'], axis=1)
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, 
     test_size=0.3,
-    random_state=42)
+    random_state=42,
+    stratify=y)
 
 standardize = StandardScaler()
 x_train = standardize.fit_transform(x_train)
