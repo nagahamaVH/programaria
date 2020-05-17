@@ -73,14 +73,14 @@ genres_list = imdb['genres'].str.split('|').tolist()
 
 unique_genres = set(list(itertools.chain.from_iterable(genres_list)))
 
-genres_dummy = imdb['genres'].str.get_dummies()#.add_prefix('genre_')
+genres_dummy = imdb['genres'].str.get_dummies()
 
 genre_effect = [
     'Animation', 'Biography', 'Comedy', 'Documentary', 'Drama', 'History',
     'Music', 'Musical', 'Mystery', 'War']
 
 imdb.drop(['genres'], axis=1, inplace=True)
-genres_dummy = genres_dummy[genre_effect]
+genres_dummy = genres_dummy[genre_effect].add_prefix('genre_')
 imdb = imdb.join(genres_dummy)
 
 # --- Creating dummy varible of top-k directors 
@@ -152,8 +152,12 @@ x = imdb.drop(['categorical_imdb_score'], axis=1)
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, 
     test_size=0.3,
-    random_state=42)
+    random_state=42,
+    stratify=y)
 
 standardize = StandardScaler()
 x_train = standardize.fit_transform(x_train)
 x_test = standardize.transform(x_test)
+
+x_train = pd.DataFrame(x_train, columns=x.columns)
+x_test = pd.DataFrame(x_test, columns=x.columns)
